@@ -1,15 +1,26 @@
 describe('MyApp', function () {
-  var $controller, scope, controller;
+  'use strict';
+  var scope, controller;
 
   beforeEach(module('myApp'));
 
-  beforeEach(inject(function (_$controller_, $rootScope) {
+  beforeEach(inject(function ($controller, $rootScope) {
     // The injector unwraps the underscores (_) from around the parameter names when matching
-    $controller = _$controller_;
     scope = $rootScope.$new();
-    controller = $controller('MyController as mc', { $scope: scope });
+    controller = $controller('MyController as mc', {
+      $scope: scope
+    });
+    $rootScope.$digest();
   }));
   it('should give its name as hello world!', function () {
     expect(scope.mc.name).toEqual('hello world!');
+  });
+  it('should have a watcher', function () {
+    expect(scope.$$watchersCount).toEqual(2);
+  });
+  it('should set change prop when watch is called', function () {
+    scope.mc.nameChange();
+    scope.$digest();
+    expect(scope.mc.changed).toEqual(true);
   });
 });
